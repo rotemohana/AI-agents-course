@@ -18,3 +18,9 @@ __pycache__/
 # Operating-system files
 .DS_Store
 Thumbs.db
+Desktop.ini
+~$*
+*.tmp
+
+# Microsoft Word documents
+*.[dD][oO][cC][xX]
