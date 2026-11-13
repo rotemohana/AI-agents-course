@@ -1,0 +1,20 @@
+# Local Git history backups (never publish repository metadata)
+.git-metadata-backups/
+
+# Python dependencies and generated caches
+.venv/
+venv/
+.deps/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Local credentials
+.env
+.env.*
+!.env.example
+
+# Operating-system files
+.DS_Store
+Thumbs.db
