@@ -44,7 +44,9 @@ Each output includes all four fields. For example, the expected shape for a bill
 This is an illustrative expected result, not a recorded API response. The notebook is supplied with cleared outputs; run it to obtain actual results.
 
 ## Troubleshooting
-- **Secret missing or access denied:** check the exact name and enable notebook access in Secrets, then rerun the credentials cell.
+- **Secret not found:** open the key icon (Secrets) in Colab's left sidebar. Add a secret named exactly `OPENAI_API_KEY` and set its value to your OpenAI API key. Enable **Notebook access**, then rerun the credentials cell.
+- **Secret access denied:** enable **Notebook access** beside the existing `OPENAI_API_KEY` secret for the notebook you are currently running. Allow access if prompted, then rerun the credentials cell.
+- **Secrets request timed out:** run the cell in the Colab browser UI, reconnect the runtime if necessary, and retry. The credentials cell reports these errors separately; it does not bypass Secrets or prompt for the key.
 - **Authentication, quota or model access error:** check the API key, account credit and access to `gpt-4o-mini`.
 - **Graph image unavailable:** the default Mermaid renderer needs network access. The notebook prints Mermaid source as a fallback and continues to the tests.
 - **Unexpected classification:** compare the printed expected and actual categories and the policy in `classify`. Assertions verify intended behavior, not guaranteed model accuracy.
