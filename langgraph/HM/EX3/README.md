@@ -24,13 +24,11 @@ The classifier gives concrete software failures precedence over payment context.
 
 ## Run in Google Colab
 1. Open [Google Colab](https://colab.research.google.com/) and choose **File → Upload notebook**. Select `ticket_router.ipynb` from this folder.
-2. Open **Secrets** using the key icon in the left sidebar.
-3. Add a secret named exactly `OPENAI_API_KEY` and paste your OpenAI API key into its value field.
-4. Enable **Notebook access** for that secret and allow access if Colab prompts.
-5. Use a standard Python CPU runtime; no GPU is required. Select **Runtime → Run all**. The first cell installs the dependencies.
-6. Inspect the graph image and the seven printed JSON results. The final assertion reports whether all expected routes and output fields passed.
+2. Use a standard Python CPU runtime; no GPU is required. Select **Runtime → Run all**. The first cell installs dependencies.
+3. When the credentials cell prompts, enter your OpenAI API key in the hidden input field and submit it. Do not paste the key into a code cell.
+4. Inspect the graph image and the seven printed JSON results. The final assertion reports whether all expected routes and output fields passed.
 
-The notebook reads the key with `from google.colab import userdata` and `userdata.get("OPENAI_API_KEY")`. It never displays the key. Do not paste credentials into notebook cells or commit credentials. OpenAI API access and available credit are required; the test suite makes seven classification requests. Rate limits, authentication errors and model access errors are surfaced rather than replaced with invented results.
+The notebook uses `from getpass import getpass` for hidden interactive input and stores the validated key in `os.environ["OPENAI_API_KEY"]` for the current runtime. No Colab Secrets setup is required. Blank input raises a clear error; if hidden input is unavailable, the cell stops. The key is never printed or saved in notebook outputs. OpenAI API access and available credit are required; the test suite makes seven classification requests. Rate limits, authentication errors and model access errors are surfaced rather than replaced with invented results.
 
 Each output includes all four fields. For example, the expected shape for a billing ticket is:
 ```json
@@ -44,9 +42,8 @@ Each output includes all four fields. For example, the expected shape for a bill
 This is an illustrative expected result, not a recorded API response. The notebook is supplied with cleared outputs; run it to obtain actual results.
 
 ## Troubleshooting
-- **Secret not found:** open the key icon (Secrets) in Colab's left sidebar. Add a secret named exactly `OPENAI_API_KEY` and set its value to your OpenAI API key. Enable **Notebook access**, then rerun the credentials cell.
-- **Secret access denied:** enable **Notebook access** beside the existing `OPENAI_API_KEY` secret for the notebook you are currently running. Allow access if prompted, then rerun the credentials cell.
-- **Secrets request timed out:** run the cell in the Colab browser UI, reconnect the runtime if necessary, and retry. The credentials cell reports these errors separately; it does not bypass Secrets or prompt for the key.
+- **Blank API key:** rerun the credentials cell and enter a non-empty key at the hidden prompt.
+- **Hidden input unavailable:** run the notebook in an interactive environment supporting hidden password input, such as Colab.
 - **Authentication, quota or model access error:** check the API key, account credit and access to `gpt-4o-mini`.
 - **Graph image unavailable:** the default Mermaid renderer needs network access. The notebook prints Mermaid source as a fallback and continues to the tests.
 - **Unexpected classification:** compare the printed expected and actual categories and the policy in `classify`. Assertions verify intended behavior, not guaranteed model accuracy.
