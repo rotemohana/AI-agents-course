@@ -1,0 +1,38 @@
+# Curious Minds Club Chatbot
+
+Curious Minds is an after-school enrichment chatbot for teenagers. It uses LangGraph and Gradio to discuss five clubs: Astronomy, Cooking, Football, World Geography, and Python Programming. The assistant is instructed to answer only questions about the selected club and suggest switching clubs for off-topic questions. This restriction depends on the model following its instruction.
+
+## Architecture
+
+- **Graph:** A single `chatbot` node connects `START` to `END` and calls the configured model once for each user message. `MODEL_NAME` is defined once in the notebook.
+- **State:** `messages` uses the `add_messages` reducer to retain conversation history; `topic` has no reducer, so a new value replaces the previous one.
+- **System message:** On every call the node builds a `SystemMessage` using the current topic, prepends it to the history, and does not save it to the state.
+- **Persistence:** A Supabase PostgreSQL `PostgresSaver` stores checkpoints under thread IDs. Saved conversations restore their messages and active topic across runtime restarts. The menu lists up to 50 recent candidate conversations and filters empty and test threads.
+- **Interface:** Gradio provides a club selector, chat, message input, saved-conversation selector, refresh button, and a new-conversation button.
+
+## Files
+
+- `curious_minds.ipynb` — self-contained setup, graph, verification, and interface.
+- `prompt.md` — original specification and revision history.
+
+## Secrets and database setup
+
+Create a Supabase project and obtain its PostgreSQL connection URL. You also need an OpenAI API key with access to the model named in the notebook. In Google Colab, open **Secrets** (the key icon), add these names, and enable notebook access:
+
+| Secret | Value |
+| --- | --- |
+| `SUPABASE_DB_URL` | Supabase PostgreSQL connection URL, including database credentials. |
+| `OPENAI_API_KEY` | Your OpenAI API key. |
+
+The notebook reads Colab Secrets using `userdata.get`, falling back to environment variables when a secret is unavailable or outside Colab. It sets `OPENAI_API_KEY` in the runtime environment for the model client and passes the database URL to psycopg. Never commit credentials or put their values in the notebook.
+
+The notebook connects with `autocommit=True`, `row_factory=dict_row`, and `prepare_threshold=0`, creates a `PostgresSaver`, and calls `setup()` to initialize its tables. Use an account permitted to create and access those tables. Saved conversations require the same database to remain available.
+
+## GitHub and Colab workflow
+
+1. Commit and push the project files to GitHub, without credentials or local dependency caches.
+2. In Google Colab, select **File → Open notebook → GitHub** and open `curious_minds.ipynb` from your repository. Alternatively, use **Upload** to open a local copy. No neighboring Python file is needed.
+3. Add and enable the two Colab Secrets, then run the cells in order. The notebook installs dependencies, initializes the checkpointer and graph, draws the graph, runs the standalone verification, and starts Gradio. The verification uses the persistent `test-1` thread; a fresh thread has eight messages after the test, and rerunning adds eight more. Inspect the answers for topic adherence.
+4. Open the Gradio link, choose a club, and send a message. Use **Saved conversations** to restore a checkpoint or **New conversation** for a fresh thread. After a runtime restart, rerun the notebook to reconnect to the same Supabase database.
+
+The Gradio link is public and uses your OpenAI key. Do not share it; stop the launch cell when finished.
