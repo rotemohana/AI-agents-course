@@ -36,3 +36,29 @@ The notebook connects with `autocommit=True`, `row_factory=dict_row`, and `prepa
 4. Open the Gradio link, choose a club, and send a message. Use **Saved conversations** to restore a checkpoint or **New conversation** for a fresh thread. After a runtime restart, rerun the notebook to reconnect to the same Supabase database.
 
 The Gradio link is public and uses your OpenAI key. Do not share it; stop the launch cell when finished.
+
+
+## Testing
+
+The notebook's original four-turn check uses `test-1`. The additional **Guard tests** exercise role claims, prompt injection, topic claims, mixed questions, and club-switch follow-ups. Message counts and saved topics are asserted; flags are only hints. Read every answer and record incorrect ones for reflection.
+
+The **Supabase inspection** cell uses read-only queries to show table columns and counts, checkpoint metadata, and blob channel metadata without displaying blob contents. The **UI logic test** calls the interface's backend functions without opening a browser; it creates a real conversation that appears in the saved list. Threads beginning with `test-` are hidden from that menu and remain in the database unless `CLEANUP_TEST_THREADS` is set to `True` in the guard cell (which deletes the guard threads it created).
+
+To check persistence after a restart:
+
+1. Run the notebook once and chat in the UI.
+2. Select **Runtime → Restart session**.
+3. Rerun the install, secrets, configuration, checkpointer, graph, and UI cells, but not the test cells.
+4. Run the **Persistence check** cell to read saved labels and the latest conversation from Supabase.
+5. Launch the UI, open an old conversation, verify its messages and club, and send another message in the same thread.
+
+Complete this manual browser checklist as well:
+
+- [ ] Ask about pancakes in Cooking.
+- [ ] Ask the football-coach question in Cooking and in Football.
+- [ ] Ask a mixed on-topic and off-topic question.
+- [ ] Switch clubs in one conversation and ask about the old topic.
+- [ ] Verify New conversation clears the chat and resets the club.
+- [ ] Verify the saved list shows `[Club] first words`.
+- [ ] Use Refresh.
+- [ ] Open an old conversation after the restart.
