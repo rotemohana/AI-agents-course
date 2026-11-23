@@ -74,3 +74,5 @@ The bonus graph uses `check_topic`, a conditional edge, a fixed-response `refuse
 In the interface, use **Search** or Enter to search saved conversations, **Clear** to reset the search, and the token display below the chat to inspect usage. Search scans at most 200 conversations and matches the club and full first-message text. Answer tokens for fixed refusals are zero; check tokens come from topic-check calls. Use **Delete conversation** and the confirmation row to delete a saved conversation permanently through `checkpointer.delete_thread`.
 
 The bonus unit checks cover routing, normalization, refusals, token accounting and graph structure. The live UI-function and guard-node tests require connected services and human review of answers. No results are included; run the notebook to produce them.
+
+The topic check sees only the latest user message, so it can misjudge a follow-up without topic words; two new multi-turn cases test this limitation.
