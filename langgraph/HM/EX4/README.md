@@ -6,7 +6,7 @@ Curious Minds is an after-school enrichment chatbot for teenagers. It uses LangG
 
 - **Graph:** A single `chatbot` node connects `START` to `END` and calls the configured model once for each user message. `MODEL_NAME` is defined once in the notebook.
 - **State:** `messages` uses the `add_messages` reducer to retain conversation history; `topic` has no reducer, so a new value replaces the previous one.
-- **System message:** On every call the node builds a `SystemMessage` using the current topic, prepends it to the history, and does not save it to the state.
+- **System message:** On every call the node builds a `SystemMessage` using the current topic, prepends it to the history, and does not save it to the state. The system message also receives the selected club’s scope and boundary text.
 - **Persistence:** A Supabase PostgreSQL `PostgresSaver` stores checkpoints under thread IDs. Saved conversations restore their messages and active topic across runtime restarts. The menu lists up to 50 recent candidate conversations and filters empty and test threads.
 - **Interface:** Gradio provides a club selector, chat, message input, saved-conversation selector, refresh button, and a new-conversation button.
 
@@ -41,6 +41,8 @@ The Gradio link is public and uses your OpenAI key. Do not share it; stop the la
 ## Testing
 
 The notebook's original four-turn check uses `test-1`. The additional **Guard tests** exercise role claims, prompt injection, topic claims, mixed questions, and club-switch follow-ups. Message counts and saved topics are asserted; flags are only hints. Read every answer and record incorrect ones for reflection.
+
+**Guard tests II** checks the boundaries between club subjects using three repetitions per case (`REPEATS = 3`). Its refusal and expected-behavior flags are heuristics; a human must review every answer.
 
 The **Supabase inspection** cell uses read-only queries to show table columns and counts, checkpoint metadata, and blob channel metadata without displaying blob contents. The **UI logic test** calls the interface's backend functions without opening a browser; it creates a real conversation that appears in the saved list. Threads beginning with `test-` are hidden from that menu and remain in the database unless `CLEANUP_TEST_THREADS` is set to `True` in the guard cell (which deletes the guard threads it created).
 
