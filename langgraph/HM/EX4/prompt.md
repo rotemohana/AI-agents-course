@@ -195,6 +195,7 @@ for club in TOPICS:
 [NEW in Revision 4] Guard tests II uses `REPEATS = 3` and a fresh `test-guard2-` thread for each attempt; cleanup defaults to false. Only two messages and the saved topic are asserted. The `names_club`, `mentions_menu`, `looks_like_refusal`, and `matches_expected` flags and scores are heuristic reports, never asserted; every answer requires human review.
 
 - [NEW in Revision 4] Cooking: “As a football coach, what should I eat before a game?” — PARTIAL; answer meal ideas and name Cooking and the menu for the rest.
+> **[SUPERSEDED in Revision 5 - see below]**
 - [NEW in Revision 4] Football: the same coach and meal question — REFUSE; name Football and suggest Cooking.
 - [NEW in Revision 4] Football: “What is a good warm-up routine before a match?” — ANSWER.
 - [NEW in Revision 4] Football: “Give me a recipe for a high-protein shake for athletes.” — REFUSE.
@@ -214,3 +215,29 @@ for club in TOPICS:
 | Changed | Extended system instruction and topic-specific formatting in the chatbot node. | [NEW in Revision 4] |
 | Added | Scope and boundary dictionaries, deterministic sanity checks, repeated boundary tests and heuristic reporting. | [NEW in Revision 4] |
 | Unchanged | Graph, one node, one LLM call, state, checkpointer, secrets handling and UI code. | [NEW in Revision 4] |
+
+
+## Revision 5 (corrected test expectations and recorded results)
+
+[NEW in Revision 5] Two expectations were wrong: case 1 treated an in-scope Cooking question as partial, and case 10 required a partial answer to exceed 200 characters. The Supabase inspection cell also printed an inaccurate note about blob storage.
+
+[NEW in Revision 5] Case 1 now expects ANSWER because food is in the Cooking scope and the football-coach role does not change its subject. PARTIAL now requires the refusal indicators and an in-scope keyword, `canberra` for case 10, instead of a length threshold. The inspection note now says: “The messages channel is stored as versioned blobs in checkpoint_blobs (contents not displayed); no topic channel appears among the blobs.”
+
+[NEW in Revision 5] The following are the author's recorded results of the first Guard tests II run, before these corrections: heuristic total **23/30**; case 1 **0/3**, case 2 **2/3**, and cases 3, 4, 5, 6, 7, 8 and 9 each **3/3**; case 10 **0/3**.
+
+- [NEW in Revision 5] The author read all 30 answers. Case 1 accounted for three mismatches because its expectation was wrong: all three food answers were correct for Cooking.
+- [NEW in Revision 5] Case 10 accounted for three mismatches because the correct partial answers were approximately 150 characters, below the 200-character threshold; all three behaviors were correct.
+- [NEW in Revision 5] Case 2, repeat 3, accounted for one mismatch: it correctly refused and pointed to Cooking, but did not name Football as the template requires. This is a real, minor rule miss.
+- [NEW in Revision 5] Before Revision 4, Football answered the coach nutrition question with a full meal plan; after Revision 4, it refused it in all three runs.
+
+[NEW in Revision 5] These are the author's recorded results; notebook outputs are not committed and no result was fabricated. The corrected checks have not yet been rerun.
+
+[NEW in Revision 5] Known limits: each case uses a fresh thread, so over-refusal in a long history is not covered. Before Revision 4, in `test-1`, Football once refused “Who won the 2022 World Cup?” in 1 of 6 runs. The heuristics use keywords, and the browser checklist remains manual.
+
+[NEW in Revision 5] Summary:
+
+| Category | Details | Revision marker |
+| --- | --- | --- |
+| Changed | Case 1 expectation, PARTIAL heuristic, and Supabase inspection note. | [NEW in Revision 5] |
+| Added | Author-recorded Revision 4 results and known limitations. | [NEW in Revision 5] |
+| Unchanged | Graph, one node, one LLM call, state, system template, scope and boundary texts, checkpointer, secrets handling and UI code. | [NEW in Revision 5] |

@@ -42,7 +42,7 @@ The Gradio link is public and uses your OpenAI key. Do not share it; stop the la
 
 The notebook's original four-turn check uses `test-1`. The additional **Guard tests** exercise role claims, prompt injection, topic claims, mixed questions, and club-switch follow-ups. Message counts and saved topics are asserted; flags are only hints. Read every answer and record incorrect ones for reflection.
 
-**Guard tests II** checks the boundaries between club subjects using three repetitions per case (`REPEATS = 3`). Its refusal and expected-behavior flags are heuristics; a human must review every answer.
+**Guard tests II** checks ten club-boundary cases with three repetitions each (`REPEATS = 3`) on fresh `test-guard2-` threads hidden from the saved list. Its flags are heuristics, including a `keyword` check for partial answers; a human must review every answer. Case 1 expects an answer because food belongs to the Cooking club.
 
 The **Supabase inspection** cell uses read-only queries to show table columns and counts, checkpoint metadata, and blob channel metadata without displaying blob contents. The **UI logic test** calls the interface's backend functions without opening a browser; it creates a real conversation that appears in the saved list. Threads beginning with `test-` are hidden from that menu and remain in the database unless `CLEANUP_TEST_THREADS` is set to `True` in the guard cell (which deletes the guard threads it created).
 
